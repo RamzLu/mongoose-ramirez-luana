@@ -106,6 +106,7 @@ export const addTagToPost = async (req, res) => {
     const updateTagPost = await PostModel.findByIdAndUpdate(
       post_id,
       { $addToSet: { tags: tag_id } },
+      // añade 'tag_id' al array 'tags'
       { new: true }
     )
       .populate("author", "-password")
