@@ -22,7 +22,22 @@ export const createUser = async (req, res) => {
 
 export const getAllUser = async (req, res) => {
   try {
-    const users = await UserModel.find();
+    // en caso de querer poner múltiples campos ponerle []
+    const users = await UserModel.find().populate([
+      {
+        // para anidar los populate
+        path: "posts", // aqui traemos el campo virtual
+        // abrimos otro populate como objeto
+        populate: {
+          path: "tags", // aca ponemos el "alias"
+          model: "Tag", // aca el modelo
+          // para elegir o excluir un campo, por ejemplo el _id del tag ponemos select: "-_id"
+        },
+      },
+      {
+        path: "profile",
+      },
+    ]);
 
     if (users.length === 0) {
       return res.status(404).json({
@@ -45,7 +60,18 @@ export const getAllUser = async (req, res) => {
 export const getUserById = async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findById(id).populate([
+      {
+        path: "posts",
+        populate: {
+          path: "tags",
+          model: "Tag",
+        },
+      },
+      {
+        path: "profile",
+      },
+    ]);
 
     return res.status(200).json(user);
   } catch (error) {
@@ -66,7 +92,18 @@ export const updateUser = async (req, res) => {
       // como la variable userUpdate te devuelve el original porque primero te muestra el primer estado y luego lo modifica,
       // entonces se pone new: true para que te muestre ya actualizado
       { new: true }
-    );
+    ).populate([
+      {
+        path: "posts",
+        populate: {
+          path: "tags",
+          model: "Tag",
+        },
+      },
+      {
+        path: "profile",
+      },
+    ]);
     return res.status(201).json({
       msg: "Actualizado correctamente.",
       data: userUpdate,
@@ -82,7 +119,18 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   const { id } = req.params;
   try {
-    const deleteUser = await UserModel.findOneAndDelete(id);
+    const deleteUser = await UserModel.findOneAndDelete(id).populate([
+      {
+        path: "profile",
+      },
+      {
+        path: "posts",
+        populate: {
+          path: "tags",
+          model: "Tag",
+        },
+      },
+    ]);
     return res.status(200).json({
       msg: "User eliminado correctamente",
       data: deleteUser,

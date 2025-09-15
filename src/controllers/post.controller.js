@@ -99,3 +99,26 @@ export const deletePost = async (req, res) => {
     });
   }
 };
+
+export const addTagToPost = async (req, res) => {
+  const { post_id, tag_id } = req.params;
+  try {
+    const updateTagPost = await PostModel.findByIdAndUpdate(
+      post_id,
+      { $addToSet: { tags: tag_id } },
+      { new: true }
+    )
+      .populate("author", "-password")
+      .populate("tags");
+
+    return res.status(200).json({
+      msg: "Tag añadido al post correctamente.",
+      data: updateTagPost,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(501).json({
+      msg: "Error interno del servidor",
+    });
+  }
+};

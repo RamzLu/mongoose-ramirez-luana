@@ -1,3 +1,4 @@
+import { populate } from "dotenv";
 import { ProfileModel } from "../models/profile.model.js";
 export const createProfile = async (req, res) => {
   const {
@@ -35,7 +36,17 @@ export const createProfile = async (req, res) => {
 
 export const getAllProfiles = async (req, res) => {
   try {
-    const profiles = await ProfileModel.find().populate("User", "-password");
+    const profiles = await ProfileModel.find().populate({
+      path: "User",
+      populate: {
+        path: "posts",
+        populate: {
+          path: "tags",
+          model: "Tag",
+          select: "-_id",
+        },
+      },
+    });
 
     if (profiles.length === 0) {
       return res.status(404).json({
@@ -58,10 +69,17 @@ export const getAllProfiles = async (req, res) => {
 export const getProfileById = async (req, res) => {
   const { id } = req.params;
   try {
-    const profile = await ProfileModel.findById(id).populate(
-      "User",
-      "-password"
-    );
+    const profile = await ProfileModel.findById(id).populate({
+      path: "User",
+      populate: {
+        path: "posts",
+        populate: {
+          path: "tags",
+          model: "Tag",
+          select: "-_id",
+        },
+      },
+    });
     return res.status(200).json(profile);
   } catch (error) {
     console.log(error);
@@ -100,10 +118,17 @@ export const updateProfile = async (req, res) => {
 export const deleteProfile = async (req, res) => {
   const { id } = req.params;
   try {
-    const deleteProfile = await ProfileModel.findOneAndDelete(id).populate(
-      "User",
-      "-password"
-    );
+    const deleteProfile = await ProfileModel.findOneAndDelete(id).populate({
+      path: "User",
+      populate: {
+        path: "posts",
+        populate: {
+          path: "tags",
+          model: "Tag",
+          select: "-_id",
+        },
+      },
+    });
     return res.status(200).json({
       msg: "Perfil eliminado correctamente",
       data: deleteProfile,
