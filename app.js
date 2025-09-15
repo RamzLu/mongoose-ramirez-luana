@@ -1,18 +1,19 @@
 import express from "express";
 import "dotenv/config";
 import { conectDB } from "./src/config/database.js";
-import { UserModel } from "./src/models/user.model.js";
-import { ProfileModel } from "./src/models/profile.model.js";
-import { TagModel } from "./src/models/tag.model.js";
-import { PostModel } from "./src/models/post.model.js";
-import { userRoute } from "./src/routes/userRoutes.js";
+import { userRoute } from "./src/routes/user.routes.js";
+import { routerTag } from "./src/routes/tag.routes.js";
+import { routeProfile } from "./src/routes/profile.route.js";
+import { routePost } from "./src/routes/post.route.js";
 
 const app = express();
 const PORT = process.env.PORT;
 app.use(express.json());
 
 app.use("/api", userRoute);
-
+app.use("/api", routerTag);
+app.use("/api", routeProfile);
+app.use("/api", routePost);
 app.listen(PORT, async () => {
   await conectDB();
   console.log(`Server is running on port ${PORT}`);
