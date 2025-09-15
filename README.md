@@ -17,10 +17,9 @@
 ## Investigar:
 
 1. Como se utiliza el populate desde las colecciones que no tienen referencias.
-
+   Utilizamos el atributo .virtual, es una característica de mongoose que te permite obtener datos no relacionados de otra colección
    Primero debemos configurar el schema donde queremos el populate y colocarle
-   `toJSON: { virtuals: true }`, esto para configurar el campo virtual y incluirlo al hacer el populate
-   luego añadimos este codigo fuera del schema
+   `toJSON: { virtuals: true }`, esto para hacer visible mis campos virtuales (en mi caso post y profile) cuando enviamos el documento como un .json, luego añadimos este codigo fuera del schema
 
    ```javascript
    tuSchema.virtual("nombre_del_campo_virtual", {
@@ -73,8 +72,7 @@
    Para eso, usé en mi post.controller.js en addTagToPost el $addToSet, que solo añade el id al array si ese Id no existe ya en el array para que no tenga etiquetas duplicadas
    Y en mi ruta utilicé patch ya que como no estamos reemplazando campos solo añadiendo es la mejor opcion ya que solo inserta el id
    y mi ruta queda así
- <br>
+   <br>
    routePost.patch("/posts/:post_id/tags/:tag_id", addTagToPost);
    <br>
    :post_id y :tag_id para que post actualizar y que tag añadir.
-
