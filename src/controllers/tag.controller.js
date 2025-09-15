@@ -77,7 +77,12 @@ export const updateTag = async (req, res) => {
 export const deleteTag = async (req, res) => {
   const { id } = req.params;
   try {
-    const deleteTag = await TagModel.findOneAndDelete(id);
+    // al ser una eliminacion lógica ya no usamos el .findByIdAndDelete(), sino que actualizamos para marcar y "borrar"
+    const deleteTag = await TagModel.findByIdAndUpdate(
+      id,
+      { deletedAt: new Date() }, // para reemplazar el null con la fecha que se tiene al momento de borrar
+      { new: true }
+    );
     return res.status(200).json({
       msg: "Tag eliminado correctamente",
       data: deleteTag,
